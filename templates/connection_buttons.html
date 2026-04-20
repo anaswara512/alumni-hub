@@ -1,0 +1,25 @@
+{% if user.id in connected_ids %}
+    <form method="post" action="{% url 'disconnect_connection' user.id %}">
+        {% csrf_token %}
+        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg">Disconnect</button>
+    </form>
+{% elif user.id in sent_requests %}
+    <form method="post" action="{% url 'cancel_request' user.id %}">
+        {% csrf_token %}
+        <button type="submit" class="px-4 py-2 bg-yellow-500 text-white rounded-lg">Cancel Request</button>
+    </form>
+{% elif user.id in received_requests %}
+    {% for conn in received_connections.values %}
+        {% if conn.from_user.id == user.id %}
+            <form method="post" action="{% url 'accept_connection' conn.id %}">
+                {% csrf_token %}
+                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg">Accept</button>
+            </form>
+        {% endif %}
+    {% endfor %}
+{% else %}
+    <form method="post" action="{% url 'connect' user.id %}">
+        {% csrf_token %}
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Connect</button>
+    </form>
+{% endif %}
